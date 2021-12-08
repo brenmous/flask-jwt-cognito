@@ -27,13 +27,35 @@ import requests
 ResponseType = TypeVar('ResponseType', FlaskResponse, WerkzeugResponse)
 
 
+def get_object():
+    try:
+        return current_app.extensions["flask-jwt-cognito"]
+    except KeyError:
+        raise RuntimeError(
+            "flask-jwt-cognito extension not initialized. "
+            "Create an instance of FlaskJWTCognito and pass the Flask "
+            "app to FlaskJWTCognito.init_app."
+        )
+
+
 class FlaskJWTCognito:
+    def __new__(mcs, name, bases, dct):
+        try:
+            return current_app.extensions["flask-jwt-cognito"]
+        except KeyError:
+            return super().__new__(mcs, name, bases, dct)
+
     def __init__(
             self,
             jwt_manager: JWTManager,
             decode_key_loader_callback: Optional[callable] = None,
-            expired_token_loader_callback: Optional[callable] = None
+            expired_token_loader_callback: Optional[callable] = None,
+            app=None
+
     ):
+        if app is not None:
+            self.init_app(app)
+
         self.jwt_manager = jwt_manager
 
         if decode_key_loader_callback is not None:
@@ -45,6 +67,9 @@ class FlaskJWTCognito:
         self.jwt_manager._expired_token_callback = self.expired_token_loader_callback
 
     def init_app(self, app):
+        if not hasattr(app, "extensions"):
+            app.extensions = {}
+        app.extensions["flask-jwt-cognito"] = self
         app.config.setdefault('JWT_COGNITO_URL', None)
         app.config.setdefault('JWT_COGNITO_PROVIDER', None)
         app.config.setdefault('JWT_COGNITO_ID', None)
@@ -54,7 +79,7 @@ class FlaskJWTCognito:
         app.config.setdefault('JWT_ALGORITHM', "RS256")
         app.config.setdefault('JWT_COOKIE_CSRF_PROTECT', True)
 
-    def _decode_key_loader_callback(self, headers: dict, payload: dict) ->:
+    def _decode_key_loader_callback(self, headers: dict, payload: dict) -> str:
         """
         A custom decode key loader, called by JWT library when it needs
         to decode a JWT. We source the decode keys from the congito
