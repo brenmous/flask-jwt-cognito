@@ -27,23 +27,12 @@ import requests
 ResponseType = TypeVar('ResponseType', FlaskResponse, WerkzeugResponse)
 
 
-def get_object():
-    try:
-        return current_app.extensions["flask-jwt-cognito"]
-    except KeyError:
-        raise RuntimeError(
-            "flask-jwt-cognito extension not initialized. "
-            "Create an instance of FlaskJWTCognito and pass the Flask "
-            "app to FlaskJWTCognito.init_app."
-        )
-
-
 class FlaskJWTCognito:
-    def __new__(mcs, name, bases, dct):
+    def __new__(cls, *args, **kwargs):
         try:
             return current_app.extensions["flask-jwt-cognito"]
         except KeyError:
-            return super().__new__(mcs, name, bases, dct)
+            return super().__new__(cls, *args, **kwargs)
 
     def __init__(
             self,
