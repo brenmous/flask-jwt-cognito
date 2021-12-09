@@ -66,7 +66,7 @@ def login():
         # Handle the error as desired and return a response
         return render_template("auth_error.html")
 
-@app.route('/logout', methods=["GET]")
+@app.route('/logout', methods=["GET"])
 @jwt_required(optional=True)
 def logout():
     return jwtc.logout()
