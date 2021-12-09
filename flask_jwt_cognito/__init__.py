@@ -26,12 +26,11 @@ import requests
 
 ResponseType = TypeVar('ResponseType', FlaskResponse, WerkzeugResponse)
 
-
 class FlaskJWTCognito:
     def __new__(cls, *args, **kwargs):
         try:
             return current_app.extensions["flask-jwt-cognito"]
-        except KeyError:
+        except (KeyError, RuntimeError):
             return super().__new__(cls, *args, **kwargs)
 
     def __init__(
