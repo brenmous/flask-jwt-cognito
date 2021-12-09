@@ -18,7 +18,7 @@ Requires config items set for `flask-jwt-extended`:
 - `JWT_ALGORITHM`: `"RS256"`
 
 These store the JWT access and refresh tokens as secure cookies.
-The algorith depends on what Cognito is using. I believe in most cases
+The algorithm depends on what Cognito is using. I believe in most cases
 it's RS256, but to confirm you can check the JWK for your cognito provider at
 `https://cognito-idp.<region>.amazonaws.com/<region>-<id>/.well-known/jwks.json`.
 
