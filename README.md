@@ -55,8 +55,10 @@ Usage example:
 from flask import url_for, render_template, current_app as app
 from my_package.extensions import jwt, jwtc
 
+# 'optional=True' in jwt_required decorator: auth not required for login, 
+#  but triggers auth callbacks
 @app.route('/login', methods=["GET"])
-@jwt_required(optional=True)  # 'optional=True': auth not required for login, but triggers auth callbacks
+@jwt_required(optional=True)  
 def login():
     try:
         return jwtc.login(url_for('app.index'))
