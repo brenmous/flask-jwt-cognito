@@ -27,7 +27,8 @@ Beyond these, configure `flask-jwt-extended` as you normally would.
 Config items for `flask-jwt-cognito`:
 - `JWT_COGNITO_ID`: Client ID of the Cognito client
 - `JWT_COGNITO_SECRET`: Client secret of the Cognito client
-- `JWT_COGNITO_PROVIDER`: The provider AKA issuer URL, e.g. `https://cognito-idp.<region>.amazonaws.com/<region>-<id>`- `JWT_COGNITO_URL`: Your Cognito authorization URL, e.g. `https://auth.my.org`
+- `JWT_COGNITO_PROVIDER`: The provider AKA issuer URL, e.g. `https://cognito-idp.<region>.amazonaws.com/<region>-<id>`
+- `JWT_COGNITO_URL`: Your Cognito authorization URL, e.g. `https://auth.my.org`
 
 Initalise using your Flask application and an instance of `flask-jwt-extended JWTManager`:
 
