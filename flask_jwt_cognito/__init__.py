@@ -17,7 +17,7 @@ from werkzeug import Response as WerkzeugResponse
 from flask import url_for, redirect, request, make_response, render_template
 from flask_jwt_extended import (
     set_access_cookies, set_refresh_cookies,
-    unset_jwt_cookies
+    unset_jwt_cookies, get_jwt
 )
 from flask_jwt_extended import JWTManager
 from flask_jwt_extended.config import config as jwt_config
@@ -27,11 +27,12 @@ import requests
 ResponseType = TypeVar('ResponseType', FlaskResponse, WerkzeugResponse)
 
 class FlaskJWTCognito:
+    @classmethod
     def __new__(cls, *args, **kwargs):
         try:
             return current_app.extensions["flask-jwt-cognito"]
         except (KeyError, RuntimeError):
-            return super().__new__(cls, *args, **kwargs)
+            return super().__new__(cls)
 
     def __init__(
             self,
@@ -51,11 +52,11 @@ class FlaskJWTCognito:
 
         if decode_key_loader_callback is not None:
             self.decode_key_loader_callback = decode_key_loader_callback
-        self.jwt_manager._decode_key_callback = self.decode_key_loader_callback
+        self.jwt_manager._decode_key_callback = self._decode_key_loader_callback
 
         if expired_token_loader_callback is not None:
             self.expired_token_loader_callback = expired_token_loader_callback
-        self.jwt_manager._expired_token_callback = self.expired_token_loader_callback
+        self.jwt_manager._expired_token_callback = self._expired_token_loader_callback
 
     def init_app(self, app):
         if not hasattr(app, "extensions"):
@@ -235,7 +236,7 @@ class FlaskJWTCognito:
         -------
         ResponseType
         """
-        jwt = self.jwt_manager.get_jwt()
+        jwt = get_jwt()
         if jwt:
             return success()
         auth_code = request.args.get('code')
