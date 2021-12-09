@@ -130,7 +130,7 @@ class FlaskJWTCognito:
             unset_jwt_cookies(response)
         return response
 
-    def _auth_code_url(logout: bool = False) -> str:
+    def _auth_code_url(self, logout: bool = False) -> str:
         """
         Constructs the authorization URL for the Cognito application.
 
@@ -151,7 +151,7 @@ class FlaskJWTCognito:
         return (f"{cognito_url}/{'logout' if logout else 'login'}"
                 f"?response_type=code&client_id={cognito_id}&redirect_uri={redirect_uri}")
 
-    def _get_tokens(auth_code: str) -> Tuple[str, str]:
+    def _get_tokens(self, auth_code: str) -> Tuple[str, str]:
         """
         Fetches an access token and refresh token for a user from
         Cognito.
@@ -186,7 +186,7 @@ class FlaskJWTCognito:
         payload = r.json()
         return payload['access_token'], payload['refresh_token']
 
-    def _spend_refresh_token(refresh_token: str) -> str:
+    def _spend_refresh_token(self, refresh_token: str) -> str:
         """
         Spends a refresh token to get a fresh access token.
 
@@ -216,21 +216,27 @@ class FlaskJWTCognito:
         payload = r.json()
         return payload['access_token']
 
-    def login(self, success: callable, failure: callable) -> ResponseType:
+    def login(self, redirect_url: str):
         """
         Starts the oauth process when the user chooses to login.
         This will redirect to the Cognito login URL and attempt
-        to verify the user using Cognito. If successful, the JWT
-        library will store the access and refresh tokens as cookies.
+        to verify the user using Cognito.
+        
+        If successful, the JWT library will store the access and refresh
+        tokens as cookies and redirect to the provided URL.
+
+        On failure, an exception is raised. It's up to you to catch
+        this and return an appropriate response.
 
         Parameters
         ----------
-        success
-            Called on successful login after tokens have been stored.
-            Should return some form of Response.
-        failure
-            Called on failure to verify user. Should return some form
-            of response.
+        redirect_url
+            The URL to redirect to if the login is successful.
+
+        Raises
+        ------
+        Exception
+            Multiple possible exception types on auth failure.
 
         Returns
         -------
@@ -238,19 +244,16 @@ class FlaskJWTCognito:
         """
         jwt = get_jwt()
         if jwt:
-            return success()
+            return redirect(redirect_url)
         auth_code = request.args.get('code')
-        try:
-            if auth_code is None:
-                return redirect(self._auth_code_url())
-            else:
-                access_token, refresh_token = self._get_tokens(auth_code)
-                response = make_response(redirect(url_for('client.index')))
-                set_access_cookies(response, access_token)
-                set_refresh_cookies(response, refresh_token)
-                return response
-        except Exception:
-            return failure()
+        if auth_code is None:
+            return redirect(self._auth_code_url())
+        else:
+            access_token, refresh_token = self._get_tokens(auth_code)
+            response = make_response(redirect(redirect_url))
+            set_access_cookies(response, access_token)
+            set_refresh_cookies(response, refresh_token)
+            return response
 
     def logout(self) -> ResponseType:
         """
