@@ -71,5 +71,5 @@ def logout():
 ```
 
 If the current implementation is too restrictive, you can still browse the code for the 
-`FlaskJWTCognito` to see examples of fetching and decoding JWTs from Cognito, and storing
+`FlaskJWTCognito` class to see examples of fetching and decoding JWTs from Cognito, and storing
 access and refresh tokens as cookies for authorization.
