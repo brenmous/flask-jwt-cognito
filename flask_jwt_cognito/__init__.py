@@ -45,6 +45,7 @@ class FlaskJWTCognito:
         if jwt_manager is None:
             raise RuntimeError("JWTManager is required on object creation")
 
+        self.app = app
         if app is not None:
             self.init_app(app)
 
