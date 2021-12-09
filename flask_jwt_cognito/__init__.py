@@ -35,12 +35,15 @@ class FlaskJWTCognito:
 
     def __init__(
             self,
-            jwt_manager: JWTManager,
+            jwt_manager: Optional[JWTManager] = None,
             decode_key_loader_callback: Optional[callable] = None,
             expired_token_loader_callback: Optional[callable] = None,
             app=None
 
     ):
+        if jwt_manager is None:
+            raise RuntimeError("JWTManager is required on object creation")
+
         if app is not None:
             self.init_app(app)
 
