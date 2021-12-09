@@ -15,7 +15,7 @@ Tested with Python 3.8, likely to work with 3.7.
 Requires config items set for `flask-jwt-extended`:
 - `JWT_TOKEN_LOCATION`: `["cookies"]`
 - `JWT_COOKIE_SECURE`: `True`
-` `JWT_ALGORITHM`: `"RS256"`
+- `JWT_ALGORITHM`: `"RS256"`
 
 These store the JWT access and refresh tokens as secure cookies.
 The algorith depends on what Cognito is using. I believe in most cases
