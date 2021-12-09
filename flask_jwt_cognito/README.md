@@ -6,7 +6,7 @@ Intended to make a Cognito oauth2 code grant flow easier to work with.
 This is a fledgling project that is just factoring out some shared functionality from two Flask
 projects. Hopefully I get around into turning it into something more robust.
 
-Install with `pip install git+https://github.com/brenmous/flask-jwt-cognito'.
+Install with `pip install git+https://github.com/brenmous/flask-jwt-cognito`.
 
 Tested with Python 3.8, likely to work with 3.7.
 
