@@ -42,7 +42,7 @@ import requests
 
 ResponseType = TypeVar('ResponseType', FlaskResponse, WerkzeugResponse)
 
-class FlaskJWTCognito:
+class JWTCognito:
     @classmethod
     def __new__(cls, *args, **kwargs):
         try:
